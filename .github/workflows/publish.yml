@@ -1,0 +1,39 @@
+name: Publish
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+
+      - run: bun install --frozen-lockfile
+
+      - name: Configure npm for GitHub Packages
+        run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" > ~/.npmrc
+
+      - name: Publish packages
+        run: |
+          for dir in packages/*/; do
+            pkg_name=$(jq -r '.name' "$dir/package.json")
+            pkg_version=$(jq -r '.version' "$dir/package.json")
+
+            if npm view "$pkg_name@$pkg_version" version --registry=https://npm.pkg.github.com 2>/dev/null; then
+              echo "Skipping $pkg_name@$pkg_version (already published)"
+            else
+              echo "Publishing $pkg_name@$pkg_version"
+              cd "$dir"
+              npm publish --registry=https://npm.pkg.github.com
+              cd -
+            fi
+          done
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

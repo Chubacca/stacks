@@ -1,0 +1,20 @@
+{
+  "name": "@chubacca/typescript-stack",
+  "version": "0.1.0",
+  "description": "Base TypeScript stack: TypeScript, Biome, Madge, Knip, Vitest",
+  "exports": {
+    "./tsconfig.json": "./tsconfig.json",
+    "./biome.json": "./biome.json",
+    "./vitest.config": "./vitest.config.ts"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "dependencies": {
+    "typescript": "^5.8",
+    "@biomejs/biome": "^1.9",
+    "madge": "^8",
+    "knip": "^5",
+    "vitest": "^3"
+  }
+}
