@@ -1,0 +1,19 @@
+{
+  "name": "@chubacca/svelte-stack",
+  "version": "0.1.0",
+  "description": "SvelteKit stack: Svelte, SvelteKit, svelte-check, Vite",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "dependencies": {
+    "@chubacca/typescript-app-stack": "workspace:*",
+    "svelte": "^5.19",
+    "@sveltejs/kit": "^2.15",
+    "@sveltejs/adapter-node": "^5.2",
+    "@sveltejs/vite-plugin-svelte": "^5.0",
+    "svelte-check": "^4.1",
+    "@lucide/svelte": "^1.12",
+    "vite": "^6.0",
+    "bits-ui": "^2.18"
+  }
+}
