@@ -1,6 +1,6 @@
 {
   "name": "@chuvenger/typescript-stack",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Base TypeScript stack: TypeScript, Biome, Madge, Knip, Vitest",
   "type": "module",
   "exports": {

@@ -1,6 +1,6 @@
 {
   "name": "@chuvenger/svelte-stack",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "SvelteKit stack: Svelte, SvelteKit, svelte-check, Vite",
   "type": "module",
   "exports": {
