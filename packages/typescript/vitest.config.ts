@@ -1,8 +1,13 @@
-import { defineConfig } from "vitest/config";
+import { defineConfig, mergeConfig, type ViteUserConfig } from "vitest/config"
 
-export default defineConfig({
-	test: {
-		globals: true,
-		passWithNoTests: true,
-	},
-});
+const base = defineConfig({
+  test: {
+    globals: true,
+    passWithNoTests: true,
+  },
+})
+
+export const createVitestConfig = (overrides: ViteUserConfig = {}) =>
+  mergeConfig(base, overrides)
+
+export default base

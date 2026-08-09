@@ -1,39 +1,32 @@
-name: Publish
+name: Release
 
 on:
   push:
     branches: [main]
 
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
 jobs:
-  publish:
+  release:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
-      packages: write
+      contents: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
 
       - uses: oven-sh/setup-bun@v2
 
-      - run: bun install --frozen-lockfile
+      - run: bun install
 
-      - name: Configure npm for GitHub Packages
-        run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" > ~/.npmrc
+      - name: Configure npm for public npm registry
+        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
 
-      - name: Publish packages
-        run: |
-          for dir in packages/*/; do
-            pkg_name=$(jq -r '.name' "$dir/package.json")
-            pkg_version=$(jq -r '.version' "$dir/package.json")
-
-            if npm view "$pkg_name@$pkg_version" version --registry=https://npm.pkg.github.com 2>/dev/null; then
-              echo "Skipping $pkg_name@$pkg_version (already published)"
-            else
-              echo "Publishing $pkg_name@$pkg_version"
-              cd "$dir"
-              npm publish --registry=https://npm.pkg.github.com
-              cd -
-            fi
-          done
+      - name: Create Release PR or publish
+        uses: changesets/action@v1
+        with:
+          version: bun run version
+          publish: bun run release
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
