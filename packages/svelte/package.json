@@ -1,19 +1,26 @@
 {
-  "name": "@chubacca/svelte-stack",
+  "name": "@chuvenger/svelte-stack",
   "version": "0.1.0",
   "description": "SvelteKit stack: Svelte, SvelteKit, svelte-check, Vite",
+  "type": "module",
+  "exports": {
+    "./tsconfig.json": "./tsconfig.json",
+    "./vite": "./vite.config.ts",
+    "./svelte.config": "./svelte.config.js"
+  },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
+    "access": "public"
   },
   "dependencies": {
-    "@chubacca/typescript-app-stack": "workspace:*",
-    "svelte": "^5.19",
-    "@sveltejs/kit": "^2.15",
-    "@sveltejs/adapter-node": "^5.2",
-    "@sveltejs/vite-plugin-svelte": "^5.0",
-    "svelte-check": "^4.1",
-    "@lucide/svelte": "^1.12",
-    "vite": "^6.0",
-    "bits-ui": "^2.18"
+    "@chuvenger/typescript-app-stack": "workspace:*",
+    "@tailwindcss/vite": "^4.3.3",
+    "svelte": "^5.56.8",
+    "@sveltejs/kit": "^2.70.2",
+    "@sveltejs/adapter-node": "^5.5.7",
+    "@sveltejs/vite-plugin-svelte": "^7.3.0",
+    "svelte-check": "^4.7.5",
+    "@lucide/svelte": "^1.31.0",
+    "vite": "^8.2.1",
+    "bits-ui": "^2.18.1"
   }
 }

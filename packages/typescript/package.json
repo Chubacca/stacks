@@ -1,22 +1,23 @@
 {
-  "name": "@chubacca/typescript-stack",
+  "name": "@chuvenger/typescript-stack",
   "version": "0.1.0",
   "description": "Base TypeScript stack: TypeScript, Biome, Madge, Knip, Vitest",
+  "type": "module",
   "exports": {
     "./tsconfig.json": "./tsconfig.json",
     "./biome.json": "./biome.json",
     "./vitest.config": "./vitest.config.ts"
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
+    "access": "public"
   },
   "dependencies": {
-    "typescript": "^5.9",
-    "@biomejs/biome": "^1.9",
-    "madge": "^8.0",
-    "knip": "^5.88",
-    "vitest": "^3.2",
-    "@vitest/coverage-v8": "^3.2",
-    "@types/node": "^22.19"
+    "typescript": "^7.0.2",
+    "@biomejs/biome": "^2.5.7",
+    "madge": "^8.0.0",
+    "knip": "^6.32.0",
+    "vitest": "^4.1.10",
+    "@vitest/coverage-v8": "^4.1.10",
+    "@types/node": "^26.2.0"
   }
 }

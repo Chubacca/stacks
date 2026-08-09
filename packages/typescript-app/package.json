@@ -1,23 +1,24 @@
 {
-  "name": "@chubacca/typescript-app-stack",
+  "name": "@chuvenger/typescript-app-stack",
   "version": "0.1.0",
   "description": "Web app stack: Tailwind, Zod, Prisma, better-auth, dotenv",
+  "type": "module",
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
+    "access": "public"
   },
   "dependencies": {
-    "@chubacca/typescript-stack": "workspace:*",
-    "tailwindcss": "^4.3",
-    "@tailwindcss/vite": "^4.3",
-    "zod": "^4.4",
-    "dotenv": "^17.4",
-    "prisma": "^7.8",
-    "@prisma/client": "^7.8",
-    "@prisma/adapter-pg": "^7.8",
-    "better-auth": "^1.6",
-    "prisma-kysely": "^3.1",
-    "prisma-extension-kysely": "^4.0",
-    "prisma-json-types-generator": "^4.1",
-    "tailwindcss-animate": "^1.0"
+    "@chuvenger/typescript-stack": "workspace:*",
+    "tailwindcss": "^4.3.3",
+    "@tailwindcss/vite": "^4.3.3",
+    "zod": "^4.4.3",
+    "dotenv": "^17.4.2",
+    "prisma": "^7.9.1",
+    "@prisma/client": "^7.9.1",
+    "@prisma/adapter-pg": "^7.9.1",
+    "better-auth": "^1.6.26",
+    "prisma-kysely": "^3.1.1",
+    "prisma-extension-kysely": "^4.0.0",
+    "prisma-json-types-generator": "^5.1.1",
+    "tailwindcss-animate": "^1.0.7"
   }
 }
