@@ -5,7 +5,7 @@
   "type": "module",
   "exports": {
     "./tsconfig.json": "./tsconfig.json",
-    "./vite": "./vite.config.ts"
+    "./vite": "./vite.config.js"
   },
   "publishConfig": {
     "access": "public"
