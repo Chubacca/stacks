@@ -5,7 +5,10 @@
   "type": "module",
   "exports": {
     "./tsconfig.json": "./tsconfig.json",
-    "./vite": "./vite.config.js"
+    "./vite": {
+      "types": "./vite.config.d.ts",
+      "default": "./vite.config.js"
+    }
   },
   "publishConfig": {
     "access": "public"
