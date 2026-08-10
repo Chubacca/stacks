@@ -1,6 +1,6 @@
 {
   "name": "@chuvenger/react-router-stack",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "React Router stack: React, React Router, tRPC, TanStack Query, Vite",
   "type": "module",
   "exports": {
