@@ -5,8 +5,14 @@
   "type": "module",
   "exports": {
     "./tsconfig.json": "./tsconfig.json",
-    "./vite": "./vite.config.js",
-    "./svelte.config": "./svelte.config.js"
+    "./vite": {
+      "types": "./vite.config.d.ts",
+      "default": "./vite.config.js"
+    },
+    "./svelte.config": {
+      "types": "./svelte.config.d.ts",
+      "default": "./svelte.config.js"
+    }
   },
   "publishConfig": {
     "access": "public"

@@ -6,7 +6,10 @@
   "exports": {
     "./tsconfig.json": "./tsconfig.json",
     "./biome.json": "./biome.json",
-    "./vitest.config": "./vitest.config.js"
+    "./vitest.config": {
+      "types": "./vitest.config.d.ts",
+      "default": "./vitest.config.js"
+    }
   },
   "publishConfig": {
     "access": "public"
