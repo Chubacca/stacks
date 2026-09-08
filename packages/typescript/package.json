@@ -16,11 +16,11 @@
   },
   "dependencies": {
     "typescript": "^7.0.2",
-    "@biomejs/biome": "^2.5.7",
+    "@biomejs/biome": "^2.5.12",
     "madge": "^8.0.0",
-    "knip": "^6.32.0",
-    "vitest": "^4.1.10",
-    "@vitest/coverage-v8": "^4.1.10",
-    "@types/node": "^26.2.0"
+    "knip": "^6.34.0",
+    "vitest": "^5.0.0",
+    "@vitest/coverage-v8": "^5.0.0",
+    "@types/node": "^26.5.0"
   }
 }
