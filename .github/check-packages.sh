@@ -87,9 +87,19 @@ done
 # --- 4. Dependency changes must carry a changeset -----------------------------
 # Nothing here is versioned by hand; a dep bump with no changeset is a change
 # that never reaches npm.
-if [ -n "${CHECK_CHANGESET_BASE:-}" ]; then
+# CI passes the PR's base branch. Locally there is nothing to pass, so fall back
+# to origin/main — `bun run check` should behave the same on a laptop as on CI.
+base="${CHECK_CHANGESET_BASE:-}"
+if [ -z "$base" ] && git rev-parse --verify -q origin/main >/dev/null 2>&1; then
+  base=origin/main
+fi
+if [ -n "$base" ] && git rev-parse --verify -q "$base" >/dev/null 2>&1; then
   echo "Checking for a changeset..."
-  if git diff --quiet "$CHECK_CHANGESET_BASE"...HEAD -- packages/; then
+  # Diff from the merge base *without* ...HEAD, so uncommitted work counts too.
+  # On CI those are identical; locally it means the check sees the change you
+  # are about to commit rather than only what is already committed.
+  merge_base=$(git merge-base "$base" HEAD)
+  if git diff --quiet "$merge_base" -- packages/; then
     ok "no package changes, changeset not required"
   elif ls .changeset/*.md >/dev/null 2>&1 \
        && [ -n "$(find .changeset -maxdepth 1 -name '*.md' ! -name 'README.md')" ]; then

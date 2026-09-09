@@ -32,6 +32,7 @@ jobs:
 
       - name: Check packages
         env:
-          # Empty on the scheduled run, which has no base branch to diff against.
+          # Empty on the scheduled run; the script then falls back to origin/main,
+          # which is also what it does when you run `bun run check` locally.
           CHECK_CHANGESET_BASE: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.base_ref) || '' }}
         run: bash ./.github/check-packages.sh
