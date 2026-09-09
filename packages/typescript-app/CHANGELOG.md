@@ -1,5 +1,12 @@
 # @chuvenger/typescript-app-stack
 
+## 0.2.1
+
+### Patch Changes
+
+- 45fd062: Ship the `prisma-shadow-migration` agent skill with the stack. Consumers can pull it into their repo with `npx agents export --target claude`. The skill documents the shadow-DB migration workflow (capture `db push` schema changes into a migration without resetting the dev DB).
+- @chuvenger/typescript-stack@0.2.1
+
 ## 0.2.0
 
 ### Minor Changes
