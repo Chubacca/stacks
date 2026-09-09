@@ -35,4 +35,4 @@ jobs:
           # Empty on the scheduled run; the script then falls back to origin/main,
           # which is also what it does when you run `bun run check` locally.
           CHECK_CHANGESET_BASE: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.base_ref) || '' }}
-        run: bash ./.github/check-packages.sh
+        run: bun run check-all
