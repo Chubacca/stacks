@@ -3,6 +3,18 @@
   "version": "0.2.0",
   "description": "Web app stack: Tailwind, Zod, Prisma, better-auth, dotenv",
   "type": "module",
+  "files": [
+    "skills",
+    "CHANGELOG.md"
+  ],
+  "agents": {
+    "skills": [
+      {
+        "name": "prisma-shadow-migration",
+        "path": "./skills/prisma-shadow-migration"
+      }
+    ]
+  },
   "publishConfig": {
     "access": "public"
   },
