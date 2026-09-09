@@ -16,15 +16,23 @@ are declared in the `agents.skills` field of `package.json` and live under
 ### Using the skills in a consuming app
 
 Skills are **not** auto-discovered from `node_modules` — export them into your
-repo's agent directory once after installing:
+repo's agent directory once after installing. The skill files follow the open
+[Agent Skills](https://code.claude.com/docs/en/skills) standard, so the same
+`SKILL.md` works for every supported agent; you just export once per agent you
+use. This project supports **Claude Code** and **Codex**:
 
 ```bash
 # discover every dependency that ships skills, then copy them in
 npx agents export --target claude   # -> .claude/skills/
+npx agents export --target codex    # -> .codex/skills/
 ```
 
+Commit whichever directories you export so teammates and CI agents get the
+skills without re-running the command. Re-run these after `npm update` /
+`bun update` to pull skill updates that shipped with a new version of this
+package.
+
 `npx agents` comes from [`npm-agentskills`](https://github.com/onmax/npm-agentskills),
-which scans `node_modules` for packages with an `agents` field. Re-run it after
-`npm update` / `bun update` to pull skill updates that shipped with a new
-version of this package. Other targets (`--target cursor`, `--target copilot`,
-etc.) are supported too; several agents also read `.claude/skills/` directly.
+which scans `node_modules` for packages with an `agents` field. Additional
+targets (`--target cursor`, `--target copilot`, etc.) work the same way, one
+`--target` per agent.
