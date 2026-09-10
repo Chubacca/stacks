@@ -8,7 +8,9 @@
   "scripts": {
     "changeset": "changeset",
     "version": "changeset version",
-    "release": "bash ./.github/publish-packages.sh"
+    "release": "bash ./.github/publish-packages.sh",
+    "check-all": "bash ./.github/check-packages.sh",
+    "check": "bun run check-all"
   },
   "devDependencies": {
     "@changesets/cli": "3.0.2"

@@ -1,0 +1,38 @@
+name: Checks
+
+on:
+  pull_request:
+  schedule:
+    # The dependency set can rot with no commit here at all — the kysely peer
+    # conflict arrived entirely through upstream releases. A weekly cold
+    # resolve surfaces that drift while it is still cheap to fix, instead of
+    # at the next release. Mondays, 08:00 UTC.
+    - cron: "0 8 * * 1"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  packages:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # The changeset check diffs against the base branch.
+          fetch-depth: 0
+
+      - uses: oven-sh/setup-bun@v2
+
+      - name: Fetch base branch
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: git fetch --no-tags origin "$BASE_REF"
+
+      - name: Check packages
+        env:
+          # Empty on the scheduled run; the script then falls back to origin/main,
+          # which is also what it does when you run `bun run check` locally.
+          CHECK_CHANGESET_BASE: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.base_ref) || '' }}
+        run: bun run check-all
