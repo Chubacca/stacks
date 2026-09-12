@@ -3,6 +3,11 @@
   "version": "0.3.0",
   "description": "Base TypeScript stack: TypeScript, Biome, Madge, Knip, Vitest",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Chubacca/stacks.git",
+    "directory": "packages/typescript"
+  },
   "exports": {
     "./tsconfig.json": "./tsconfig.json",
     "./biome.json": "./biome.json",

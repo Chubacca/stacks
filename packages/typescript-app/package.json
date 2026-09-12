@@ -3,17 +3,21 @@
   "version": "0.3.0",
   "description": "Web app stack: Tailwind, Zod, Prisma, better-auth, dotenv",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Chubacca/stacks.git",
+    "directory": "packages/typescript-app"
+  },
+  "exports": {
+    "./link-skills": "./link-skills.js"
+  },
   "files": [
+    "link-skills.js",
     "skills",
     "CHANGELOG.md"
   ],
-  "agents": {
-    "skills": [
-      {
-        "name": "prisma-shadow-migration",
-        "path": "./skills/prisma-shadow-migration"
-      }
-    ]
+  "bin": {
+    "link-stack-skills": "./link-skills.js"
   },
   "publishConfig": {
     "access": "public"

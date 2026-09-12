@@ -2,8 +2,10 @@
 
 Publishes the `@chuvenger/*` stack packages to npm. A package here is a curated
 dependency set plus a few config files — there is no application code, no tests,
-no database and no schema in this repo. Checks are therefore about the
-*published artifact*, not the source.
+no database and no schema in this repo. The one script is `link-stack-skills`
+(`packages/typescript-app/link-skills.js`), which links bundled agent skills
+into consuming apps. Checks are therefore about the *published artifact*, not
+the source.
 
 ## Before committing
 
@@ -16,7 +18,8 @@ it must pass with zero failures. It verifies that:
 
 - the dependency set resolves with no warnings, on a cold lockfile
 - internal deps stay on `workspace:*`
-- every `exports` target and bundled skill path is present in the packed tarball
+- every `exports` and `bin` target and bundled skill is present in the packed
+  tarball, and each skill's frontmatter has a `name` and `description`
 - a change under `packages/` carries a changeset
 
 It deletes `bun.lock` first, because an existing lockfile replays the previous

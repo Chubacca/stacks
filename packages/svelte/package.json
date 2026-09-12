@@ -3,6 +3,11 @@
   "version": "0.3.0",
   "description": "SvelteKit stack: Svelte, SvelteKit, svelte-check, Vite",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Chubacca/stacks.git",
+    "directory": "packages/svelte"
+  },
   "exports": {
     "./tsconfig.json": "./tsconfig.json",
     "./vite": {
@@ -13,6 +18,9 @@
       "types": "./svelte.config.d.ts",
       "default": "./svelte.config.js"
     }
+  },
+  "bin": {
+    "link-stack-skills": "./link-skills.js"
   },
   "publishConfig": {
     "access": "public"

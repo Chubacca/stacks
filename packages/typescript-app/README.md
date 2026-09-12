@@ -5,9 +5,8 @@ Web app stack: Tailwind, Zod, Prisma, better-auth, dotenv.
 ## Bundled agent skills
 
 This package ships coding-agent skills alongside its code, following the
-[Agent Skills](https://code.claude.com/docs/en/skills) open standard. Skills
-are declared in the `agents.skills` field of `package.json` and live under
-[`skills/`](./skills).
+[Agent Skills](https://agentskills.io) open standard. Each skill is a
+`skills/<name>/SKILL.md` under [`skills/`](./skills).
 
 | Skill | What it does |
 | --- | --- |
@@ -15,24 +14,47 @@ are declared in the `agents.skills` field of `package.json` and live under
 
 ### Using the skills in a consuming app
 
-Skills are **not** auto-discovered from `node_modules` — export them into your
-repo's agent directory once after installing. The skill files follow the open
-[Agent Skills](https://code.claude.com/docs/en/skills) standard, so the same
-`SKILL.md` works for every supported agent; you just export once per agent you
-use. This project supports **Claude Code** and **Codex**:
+Agents don't look in `node_modules`, so the skills have to be linked into your
+repo's agent directories. The stacks ship a `link-stack-skills` command that
+does this. Run it from your app's `prepare` script so it re-runs on every
+install:
 
-```bash
-# discover every dependency that ships skills, then copy them in
-npx agents export --target claude   # -> .claude/skills/
-npx agents export --target codex    # -> .codex/skills/
+```json
+{
+  "scripts": {
+    "prepare": "link-stack-skills"
+  }
+}
 ```
 
-Commit whichever directories you export so teammates and CI agents get the
-skills without re-running the command. Re-run these after `npm update` /
-`bun update` to pull skill updates that shipped with a new version of this
-package.
+On `bun install` it symlinks every skill shipped by the `@chuvenger/*` stacks
+your app depends on into `.claude/skills/<name>` (Claude Code) and
+`.agents/skills/<name>` (Codex) at the repo root. The links point into
+`node_modules`, so skills update with the stack version and nothing is copied.
+It also writes a `.gitignore` into each of those directories that covers its
+own links, so there's nothing to commit and nothing to add to your own
+`.gitignore`.
 
-`npx agents` comes from [`npm-agentskills`](https://github.com/onmax/npm-agentskills),
-which scans `node_modules` for packages with an `agents` field. Additional
-targets (`--target cursor`, `--target copilot`, etc.) work the same way, one
-`--target` per agent.
+It only ever touches its own links. A skill of yours with the same name is
+left alone with a warning, and links to skills a newer stack version dropped
+are removed.
+
+The command comes from whichever stack your app depends on directly
+(`react-router-stack`, `svelte-stack` or this package), so it's there under
+bun's hoisted and isolated linkers and with `bun install --production`.
+
+**In a bun workspace**, bun only runs the root package's `prepare`, so point it
+at the app that depends on the stack:
+
+```json
+{
+  "scripts": {
+    "prepare": "cd apps/web && bun run link-stack-skills"
+  }
+}
+```
+
+The skill layout is the one other skill tools read too, so
+[`skills-npm`](https://github.com/antfu/skills-npm) or
+[TanStack Intent](https://github.com/TanStack/intent) also work if you'd rather
+use one of those.
