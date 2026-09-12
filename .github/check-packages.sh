@@ -51,18 +51,28 @@ for dir in packages/*/; do
 done
 [ "$fail" -eq 0 ] && ok "all internal deps on workspace:*"
 
-# --- 3. Everything package.json points at must actually ship ------------------
-# `exports` targets and bundled agent skills are resolved by consumers out of
-# the tarball. A rename, or a `files` field added later, silently breaks them
-# with no error on this side of the publish.
-echo "Checking exports and skill paths are packed..."
+# --- 3. Everything consumers resolve out of the tarball must actually ship ----
+# `exports` and `bin` targets, and the `skills/<name>/SKILL.md` files that
+# link-stack-skills finds in node_modules. A rename, or a `files` field added
+# later, silently breaks them with no error on this side of the publish — and a
+# missing bin fails the consumer's `prepare`, so their whole install.
+echo "Checking exports, bins and skills are packed..."
 for dir in packages/*/; do
   name=$(jq -r .name "$dir/package.json")
-  refs=$(jq -r '
-    [ (.exports // {} | .. | strings | select(startswith("./"))),
-      ((.agents.skills // []) | .[].path) ]
-    | .[] | sub("^\\./"; "")
-  ' "$dir/package.json" | sort -u)
+  # The Agent Skills spec requires both name and description in the
+  # frontmatter; an agent may not load a skill missing either, and nothing on
+  # this side of the publish would notice.
+  for skill in "$dir"skills/*/SKILL.md; do
+    [ -e "$skill" ] || continue
+    front=$(awk 'NR==1 && $0!="---" {exit} NR>1 && $0=="---" {exit} NR>1' "$skill")
+    for key in name description; do
+      grep -q "^$key:" <<<"$front" || err "$name: ${skill#"$dir"} frontmatter has no $key"
+    done
+  done
+  refs=$( { jq -r '[.exports, .bin] | .. | strings | select(startswith("./")) | sub("^\\./"; "")' \
+              "$dir/package.json"
+            (cd "$dir" && ls skills/*/SKILL.md 2>/dev/null)
+          } | sort -u)
   [ -z "$refs" ] && continue
 
   packed=$(cd "$dir" && bun publish --dry-run --access public </dev/null 2>&1 \

@@ -3,12 +3,20 @@
   "version": "0.3.0",
   "description": "React Router stack: React, React Router, tRPC, TanStack Query, Vite",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Chubacca/stacks.git",
+    "directory": "packages/react-router"
+  },
   "exports": {
     "./tsconfig.json": "./tsconfig.json",
     "./vite": {
       "types": "./vite.config.d.ts",
       "default": "./vite.config.js"
     }
+  },
+  "bin": {
+    "link-stack-skills": "./link-skills.js"
   },
   "publishConfig": {
     "access": "public"
