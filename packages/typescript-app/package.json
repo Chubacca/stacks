@@ -1,6 +1,6 @@
 {
   "name": "@chuvenger/typescript-app-stack",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Web app stack: Tailwind, Zod, Prisma, better-auth, dotenv",
   "type": "module",
   "repository": {
