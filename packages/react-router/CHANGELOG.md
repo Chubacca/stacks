@@ -1,5 +1,11 @@
 # @chuvenger/react-router-stack
 
+## 0.5.0
+
+### Patch Changes
+
+- @chuvenger/typescript-app-stack@0.5.0
+
 ## 0.4.0
 
 ### Patch Changes

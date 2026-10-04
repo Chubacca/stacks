@@ -1,5 +1,12 @@
 # @chuvenger/typescript-app-stack
 
+## 0.5.0
+
+### Patch Changes
+
+- Updated dependencies [3475bbb]
+  - @chuvenger/typescript-stack@0.5.0
+
 ## 0.4.0
 
 ### Minor Changes
