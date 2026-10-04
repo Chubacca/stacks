@@ -1,5 +1,12 @@
 # @chuvenger/react-router-stack
 
+## 0.5.1
+
+### Patch Changes
+
+- Updated dependencies [07139a4]
+  - @chuvenger/typescript-app-stack@0.5.1
+
 ## 0.5.0
 
 ### Patch Changes
