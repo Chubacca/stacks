@@ -10,19 +10,28 @@ jobs:
   release:
     runs-on: ubuntu-latest
     permissions:
+      # The release commits the version bumps straight back to main.
       contents: write
+      # Lets the runner mint the OIDC token npm exchanges for publish rights.
+      # Without it there is no credential at all — the publish step has no
+      # token to fall back on.
+      id-token: write
     steps:
       - uses: actions/checkout@v4
 
       - uses: oven-sh/setup-bun@v2
 
-      - run: bun install
+      # bun installs and runs changesets, but npm does the publishing: trusted
+      # publishing is OIDC-based and `bun publish` cannot do OIDC. Node 24
+      # ships an npm comfortably past the 11.5.1 floor trusted publishing
+      # needs. No `NODE_AUTH_TOKEN`, and deliberately no cache — the registry
+      # URL is all the npm CLI needs to recognise the OIDC exchange.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          registry-url: "https://registry.npmjs.org"
 
-      - name: Configure npm for public npm registry
-        # Write to the repo root (not ~/.npmrc): `bun publish` resolves auth from
-        # the nearest .npmrc walking up from each package dir, not from $HOME.
-        # `.npmrc` is gitignored, so the token never gets committed below.
-        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
+      - run: bun install
 
       - name: Version, commit, and publish
         # Single-merge release: when a feature PR carrying a changeset lands on
@@ -46,4 +55,3 @@ jobs:
           bun run release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

@@ -39,11 +39,25 @@ by hand and never run `changeset version` locally. See
 
 ## Publishing
 
-`.github/publish-packages.sh` resolves `workspace:*` internal deps itself
-instead of letting `bun publish` do it. This is deliberate and should not be
-"simplified" back: bun takes that version from `bun.lock`, not `package.json`,
-and CI installs before `changeset version` bumps — so the lockfile is always one
-release stale at publish time. Relying on it shipped 0.1.3, 0.2.0 and 0.2.1 each
-pinned to its predecessor, holding consumers two stacks behind. A post-publish
-step reads the metadata back off the registry and fails the release if an
-internal pin disagrees with the version published beside it.
+Publishing authenticates by **npm trusted publishing (OIDC)** — there is no
+`NPM_TOKEN` and no `.npmrc`. The release job carries `id-token: write` and the
+npm CLI exchanges that for publish rights, which also gets provenance
+attestations for free. Each of the four packages has a trusted publisher
+configured on npmjs.com pointing at this repo and `publish.yml`; renaming that
+workflow file breaks the release until the npm side is updated to match.
+
+This is why the publish step is `npm publish` and not `bun publish`: bun cannot
+do OIDC, it only reads a token out of an `.npmrc`. Bun still does the install
+and runs changesets; only the publish call is npm. `check-packages.sh` models
+the tarball with `npm pack --dry-run` for the same reason — it should ask
+whatever actually packs the release.
+
+`.github/publish-packages.sh` also resolves `workspace:*` internal deps itself
+rather than leaving it to the publisher. This is deliberate and should not be
+"simplified" back. The rule was learned under `bun publish`, which takes that
+version from `bun.lock`, not `package.json` — and CI installs before `changeset
+version` bumps, so the lockfile was always one release stale at publish time.
+Relying on it shipped 0.1.3, 0.2.0 and 0.2.1 each pinned to its predecessor,
+holding consumers two stacks behind. A post-publish step reads the metadata back
+off the registry and fails the release if an internal pin disagrees with the
+version published beside it.

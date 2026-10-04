@@ -75,8 +75,11 @@ for dir in packages/*/; do
           } | sort -u)
   [ -z "$refs" ] && continue
 
-  packed=$(cd "$dir" && bun publish --dry-run --access public </dev/null 2>&1 \
-    | grep '^packed ' | sed 's/^packed [^ ]* //')
+  # Ask the real publisher what it would pack. `npm publish` does the release
+  # (bun cannot authenticate by OIDC), so modelling the tarball with bun's
+  # packer here would be checking something nothing actually ships.
+  packed=$(cd "$dir" && npm pack --dry-run --json 2>/dev/null \
+    | jq -r '.[0].files[].path')
   if [ -z "$packed" ]; then
     err "$name: could not determine packed file list"
     continue

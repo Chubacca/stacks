@@ -3,15 +3,23 @@
 set -euo pipefail
 
 # --- Why this script pins internal deps itself --------------------------------
-# Internal deps are declared `workspace:*`. `bun publish` does rewrite those to
-# a concrete version in the packed tarball — but it reads that version from
-# bun.lock, NOT from package.json, and `bun install` never refreshes a
-# workspace entry's `version` field afterwards (not even with --force). CI
-# installs before `changeset version` bumps, so the lockfile is always one
-# release stale at publish time. Leaning on that rewrite shipped 0.1.3, 0.2.0
-# and 0.2.1 each pinned to its PREDECESSOR, which silently held consumers two
-# stacks back. So: substitute the versions ourselves, from the package.json
-# files `changeset version` just wrote, and leave bun nothing to infer.
+# Internal deps are declared `workspace:*`, and nothing may reach npm still
+# speaking that protocol. We substitute the versions ourselves, from the
+# package.json files `changeset version` just wrote, instead of leaving it to
+# the publisher to infer.
+#
+# That rule was learned under `bun publish`: it does rewrite `workspace:*` in
+# the packed tarball, but it reads the version from bun.lock, NOT from
+# package.json, and `bun install` never refreshes a workspace entry's `version`
+# field afterwards (not even with --force). CI installs before `changeset
+# version` bumps, so the lockfile was always one release stale at publish time.
+# Leaning on that rewrite shipped 0.1.3, 0.2.0 and 0.2.1 each pinned to its
+# PREDECESSOR, which silently held consumers two stacks back.
+#
+# Publishing now goes through `npm publish`, which resolves the protocol from
+# the working tree rather than a lockfile. That is not a reason to delete this
+# step: the substitution is cheap, it is what the tripwire at the bottom checks
+# against, and it keeps the published pins independent of publisher behaviour.
 
 backup=$(mktemp -d)
 for dir in packages/*/; do
@@ -55,7 +63,12 @@ for dir in packages/*/; do
     echo "Skipping $name@$ver (already published)"
   else
     echo "Publishing $name@$ver"
-    (cd "$dir" && bun publish --access public)
+    # npm, not bun: this release authenticates by npm trusted publishing
+    # (OIDC), and `bun publish` has no OIDC support — it only knows how to read
+    # a token out of an .npmrc. The npm CLI picks the OIDC credential up on its
+    # own from the workflow's `id-token: write` permission; there is no token
+    # to configure here.
+    (cd "$dir" && npm publish --access public)
   fi
 done
 
