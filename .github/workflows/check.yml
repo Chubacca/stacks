@@ -24,6 +24,14 @@ jobs:
 
       - uses: oven-sh/setup-bun@v2
 
+      # The artifact checks shell out to npm, because npm is what packs and
+      # publishes the release. Pin the same Node as publish.yml so the check
+      # models the publisher rather than whatever npm the runner happens to
+      # ship.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
       - name: Fetch base branch
         if: github.event_name == 'pull_request'
         env:
