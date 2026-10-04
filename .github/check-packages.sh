@@ -69,7 +69,23 @@ for dir in packages/*/; do
       grep -q "^$key:" <<<"$front" || err "$name: ${skill#"$dir"} frontmatter has no $key"
     done
   done
-  refs=$( { jq -r '[.exports, .bin] | .. | strings | select(startswith("./")) | sub("^\\./"; "")' \
+  # npm silently rewrites package.json as it publishes and only *warns*. A
+  # `bin` path written as "./x.js" is deleted outright rather than normalised
+  # — so the package ships with no bin, which fails the consumer's `prepare`
+  # and so their whole install. `bun publish` rewrote that form instead of
+  # dropping it, so the defect only appeared on moving to npm, and only in a
+  # warning nothing was reading. Treat any correction as a failure: the
+  # published manifest should be the one in the repo.
+  corrections=$(cd "$dir" && npm publish --dry-run --access public </dev/null 2>&1 \
+    | grep '^npm warn publish ' || true)
+  if grep -q 'auto-corrected' <<<"$corrections"; then
+    err "$name: npm would rewrite package.json on publish:"
+    sed 's/^npm warn publish /    /' <<<"$corrections" >&2
+  fi
+
+  # Both spellings reach the tarball, and `bin` must NOT use "./" (above), so
+  # strip the prefix rather than requiring it.
+  refs=$( { jq -r '[.exports, .bin] | .. | strings | sub("^\\./"; "")' \
               "$dir/package.json"
             (cd "$dir" && ls skills/*/SKILL.md 2>/dev/null)
           } | sort -u)

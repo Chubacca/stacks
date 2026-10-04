@@ -16,7 +16,7 @@
     }
   },
   "bin": {
-    "link-stack-skills": "./link-skills.js"
+    "link-stack-skills": "link-skills.js"
   },
   "publishConfig": {
     "access": "public"
