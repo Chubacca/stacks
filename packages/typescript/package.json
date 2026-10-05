@@ -1,7 +1,7 @@
 {
   "name": "@chuvenger/typescript-stack",
   "version": "0.5.1",
-  "description": "Base TypeScript stack: TypeScript, Biome, Madge, Knip, Vitest",
+  "description": "Base TypeScript stack: TypeScript, Biome, Knip, Vitest",
   "type": "module",
   "repository": {
     "type": "git",
@@ -22,7 +22,6 @@
   "dependencies": {
     "typescript": "^7.0.2",
     "@biomejs/biome": "^2.5.15",
-    "madge": "^8.0.0",
     "knip": "^6.39.0",
     "vitest": "^5.0.3",
     "@vitest/coverage-v8": "^5.0.3",
