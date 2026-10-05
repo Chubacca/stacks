@@ -1,5 +1,11 @@
 # @chuvenger/svelte-stack
 
+## 0.6.0
+
+### Patch Changes
+
+- @chuvenger/typescript-app-stack@0.6.0
+
 ## 0.5.1
 
 ### Patch Changes
