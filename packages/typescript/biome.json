@@ -36,7 +36,8 @@
         }
       },
       "suspicious": {
-        "noUnknownAtRules": "off"
+        "noUnknownAtRules": "off",
+        "noImportCycles": "error"
       },
       "style": {
         "noNonNullAssertion": "off",
