@@ -58,3 +58,17 @@ The skill layout is the one other skill tools read too, so
 [`skills-npm`](https://github.com/antfu/skills-npm) or
 [TanStack Intent](https://github.com/TanStack/intent) also work if you'd rather
 use one of those.
+
+## Config exports
+
+```js
+// knip.config.ts
+export { default } from "@chuvenger/typescript-app-stack/knip.config"
+```
+
+Knip enables its plugins by looking for the tool in the *app's* package.json,
+which on this stack names the stack and little else, so each one has to be named
+explicitly. This preset is the base stack's plus Prisma: under Prisma 7 the
+schema path and seed command live in `prisma.config.ts`, and without the plugin
+that file is not a config file to knip and reads as an unused file. See
+[`@chuvenger/typescript-stack`](../typescript/README.md) for the rest.

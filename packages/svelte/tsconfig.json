@@ -1,8 +1,7 @@
 {
-  "extends": "@chuvenger/typescript-stack/tsconfig.json",
   "compilerOptions": {
-    "lib": ["DOM", "DOM.Iterable", "ES2022"],
-    "types": ["node", "vite/client", "vitest/globals"],
-    "noEmit": true
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "sourceMap": true
   }
 }

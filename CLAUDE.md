@@ -20,10 +20,11 @@ it must pass with zero failures. It verifies that:
 - internal deps stay on `workspace:*`
 - every `exports` and `bin` target and bundled skill is present in the packed
   tarball, and each skill's frontmatter has a `name` and `description`
-- each exported Vite/Vitest config builds fresh plugin instances per call
+- every `*.config.js` export is a factory, and two calls share none of the
+  objects the config exposes
 - the framework `biome.json` files are current with the base they were
   generated from
-- a change under `packages/` carries a changeset
+- every package changed since the merge base is named in a changeset
 
 It deletes `bun.lock` first, because an existing lockfile replays the previous
 resolution and hides peer conflicts. That file is gitignored and never
@@ -69,6 +70,28 @@ Changeset-driven with a fixed group: all four packages bump together, and CI
 does the bump on merge to `main`. Add a changeset; never edit a `version` field
 by hand and never run `changeset version` locally. See
 `.claude/skills/version-bump`.
+
+Name **every** package whose files you changed in the changeset frontmatter.
+The fixed group means naming one is enough to bump all four, but the changelog
+entry only lands on the packages a changeset lists — which is how 0.7.0 and
+0.8.0 came to read "No changes in this release" in `typescript-stack` while
+changing files it ships. `check-all` fails on a package that changed without
+being named.
+
+## Knip presets
+
+Each package exports a `./knip.config` and they layer along the dependency
+chain — base → app → framework — so each knip plugin is named by the package
+that ships the tool. A framework preset calls the one below it through
+`createKnipConfig` and `mergeKnipConfig` concatenates the array options.
+
+They exist because knip enables its plugins by looking for the framework in the
+*app's* package.json, and an app here names the stack and almost nothing else,
+so nothing is ever detected. Two cases need more than a flag and the reasons are
+in the code: knip registers its own `.svelte` compiler only when `svelte` is an
+app dependency, and its `sveltekit` plugin finds routes by parsing the app's
+`vite.config.ts` for a `sveltekit` import that a stack-based app does not have.
+A preset may only remove false positives the stack layout causes.
 
 ## Publishing
 
