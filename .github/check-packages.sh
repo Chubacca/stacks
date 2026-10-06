@@ -156,7 +156,21 @@ for dir in packages/*/; do
   done <<<"$configs"
 done
 
-# --- 5. Dependency changes must carry a changeset -----------------------------
+# --- 5. Framework Biome configs must stay flattened and current --------------
+# Biome resolves exactly one level of `extends`, dropping the grandparent
+# without a warning, so a framework config cannot reach the base by extending
+# it — an app naming only the framework config would get its keys and nothing
+# else. The framework configs therefore inline the base and are generated;
+# this fails if the base moved and they were not regenerated.
+echo "Checking framework Biome configs are current..."
+if biome_drift=$(bash ./.github/build-biome-configs.sh --check 2>&1); then
+  ok "framework biome.json files match the base"
+else
+  err "framework Biome configs are stale:"
+  sed 's/^/    /' <<<"$biome_drift" >&2
+fi
+
+# --- 6. Dependency changes must carry a changeset -----------------------------
 # Nothing here is versioned by hand; a dep bump with no changeset is a change
 # that never reaches npm.
 # CI passes the PR's base branch. Locally there is nothing to pass, so fall back

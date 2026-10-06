@@ -20,6 +20,9 @@ it must pass with zero failures. It verifies that:
 - internal deps stay on `workspace:*`
 - every `exports` and `bin` target and bundled skill is present in the packed
   tarball, and each skill's frontmatter has a `name` and `description`
+- each exported Vite/Vitest config builds fresh plugin instances per call
+- the framework `biome.json` files are current with the base they were
+  generated from
 - a change under `packages/` carries a changeset
 
 It deletes `bun.lock` first, because an existing lockfile replays the previous
@@ -29,6 +32,36 @@ committed, so this is safe — your lockfile just gets regenerated.
 There is nothing else to run. No test, lint or typecheck step exists, and the
 usual pre-commit hunts (test gaps for changed functions, missing DB indexes,
 Prisma schema drift) have nothing to apply to in this repo.
+
+## Biome configs
+
+`packages/typescript/biome.json` is the only one written by hand. The framework
+stacks' `biome.json` files are **generated** from it:
+
+```bash
+bash .github/build-biome-configs.sh          # rewrite them
+bash .github/build-biome-configs.sh --check  # what check-all runs
+```
+
+They inline the base instead of extending it because Biome resolves exactly one
+level of `extends` — a config reached *through* an extends has its own
+`extends` silently ignored, with no warning. So `react-router-stack/biome.json`
+extending the base gives an app that names only the framework config a config
+with the framework's keys and nothing else: no VCS ignore file, no formatter
+settings, none of the base rule tweaks. Measured on Biome 2.5.15 with three
+local files — `a extends b` reports VCS enabled, `c extends a extends b` does
+not. Downstream that looked like 174 files linted instead of 144 and the
+formatter reverting to tabs.
+
+Consumers therefore name one config, the stack they depend on:
+
+```json
+{ "extends": ["@chuvenger/react-router-stack/biome.json"] }
+```
+
+Per-framework additions (currently just the React domain) go in the `overlay`
+function in the generator, not in the generated file. Editing a generated
+`biome.json` by hand fails `check-all` on the next run.
 
 ## Versioning
 
