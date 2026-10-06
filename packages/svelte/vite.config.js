@@ -17,13 +17,19 @@ export const svelteKitConfig = {
   preprocess: vitePreprocess(),
 }
 
-/** @param {KitConfig} [kit] */
+/**
+ * Built per call, never cached at module scope. Vite re-evaluates a project's
+ * own `vite.config.ts` on every config load, but this module is a bare import
+ * out of node_modules, so Node's ESM cache evaluates it exactly once per
+ * process. A plugin held in module scope would therefore be the *same* instance
+ * for every load, and these plugins carry build state — a later build would
+ * inherit the instance that finished the previous one.
+ * @param {KitConfig} [kit]
+ */
 const createBase = (kit) =>
   defineConfig({
     plugins: [tailwindcss(), sveltekit({ ...svelteKitConfig, ...kit })],
   })
-
-const base = createBase()
 
 /**
  * Merge caller overrides onto the stack's base Vite config. SvelteKit options
@@ -32,6 +38,6 @@ const base = createBase()
  * @param {UserConfig & { kit?: KitConfig }} [overrides]
  */
 export const createViteConfig = ({ kit, ...overrides } = {}) =>
-  mergeConfig(kit ? createBase(kit) : base, overrides)
+  mergeConfig(createBase(kit), overrides)
 
-export default base
+export default () => createBase()
