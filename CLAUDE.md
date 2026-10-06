@@ -78,6 +78,28 @@ entry only lands on the packages a changeset lists — which is how 0.7.0 and
 changing files it ships. `check-all` fails on a package that changed without
 being named.
 
+## Dependencies held back on purpose
+
+Two ranges in `packages/typescript-app/package.json` and one in
+`packages/typescript/package.json` are deliberately behind their `latest`
+dist-tag. An "update everything to latest" pass will try to move all three;
+don't let it.
+
+- **`typescript` stays on `^6.0.3`.** TypeScript 7 is the Go port and its npm
+  package no longer exposes the classic JavaScript API — the `.` export is just
+  a version string. `@sveltejs/kit@3.0.1` calls `ts.readConfigFile(file,
+  ts.sys.readFile)` to validate the app tsconfig, so under 7 `svelte-kit sync`
+  *and* `vite build` throw `Cannot read properties of undefined (reading
+  'readFile')` for any app with a `tsconfig.json`. Kit's `if (!ts) return`
+  guard does not help: the module imports fine, it is just nearly empty.
+  `svelte-check` also peers on `^5 || ^6` and rejects 7, and `knip` carries its
+  own `typescript@7.0.2` as a hard dependency either way. Revisit when Kit
+  supports TypeScript 7's API.
+- **`prisma` stays on `^7.10.0`** — its `latest` is an `8.0.0` prerelease while
+  `@prisma/client` and `@prisma/adapter-pg` are stable on 7.x.
+- **`kysely` stays on `^0.28.17`** — `prisma-extension-kysely` peers on
+  `^0.27.0 || ^0.28.0` and rejects 0.29.
+
 ## Knip presets
 
 Each package exports a `./knip.config` and they layer along the dependency

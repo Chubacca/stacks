@@ -43,9 +43,12 @@ record the intended bump as a changeset — nothing more.
   `packages/svelte` too, so `svelte-stack`'s changelog read "Patch Changes —
   @chuvenger/typescript-stack@0.7.0" and `typescript-stack`'s read "No changes
   in this release" — for releases that changed the files both of them ship.
-- Packages you did **not** change do not belong in the frontmatter; they pick up
-  the version from the group and a dependency-bump line in their changelog,
-  which is accurate.
+- That is a floor, not a cap. **Also name a package whose consumers have to
+  read the entry**, even if its own files did not change — a dependency range
+  held in `typescript-stack` that unbreaks the SvelteKit build belongs in
+  `svelte-stack`'s changelog too, or a `svelte-stack` user sees only "Updated
+  dependencies". Beyond that, leave packages out: they pick up the version from
+  the group and a dependency-bump line, which is accurate.
 
 ## Choosing the bump level
 
