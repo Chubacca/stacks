@@ -1,5 +1,11 @@
 # @chuvenger/typescript-app-stack
 
+## 0.8.0
+
+### Patch Changes
+
+- @chuvenger/typescript-stack@0.8.0
+
 ## 0.7.0
 
 ### Patch Changes
