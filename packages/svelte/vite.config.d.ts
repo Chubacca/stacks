@@ -9,6 +9,10 @@ export declare function createViteConfig(
   overrides?: UserConfig & { kit?: KitConfig },
 ): UserConfig
 
-/** The stack's base Vite config (Tailwind + SvelteKit plugins). */
-declare const base: UserConfig
-export default base
+/**
+ * The stack's base Vite config (Tailwind + SvelteKit plugins), as a factory —
+ * Vite calls it on each config load so the stateful plugins are never shared
+ * between builds.
+ */
+declare const createBase: () => UserConfig
+export default createBase

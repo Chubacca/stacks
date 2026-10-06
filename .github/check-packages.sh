@@ -113,7 +113,50 @@ for dir in packages/*/; do
   ok "$name: $(wc -l <<<"$refs" | tr -d ' ') referenced path(s) present and packed"
 done
 
-# --- 4. Dependency changes must carry a changeset -----------------------------
+# --- 4. Config exports must build their plugins per call ----------------------
+# Vite re-evaluates a project's own vite.config.ts on every config load, but
+# these modules are bare node_modules imports, so Node's ESM cache evaluates
+# them exactly once per process. A base held in module scope is therefore the
+# *same* plugin instances for every load, and `reactRouter()` carries build
+# state — the server build inherits the instance that just finished the client
+# build and dies with "Expected build manifest". Nothing else here would notice:
+# in this repo the config is a local file that does get re-evaluated, so the bug
+# only exists once the package is installed.
+echo "Checking config exports build fresh plugins per call..."
+for dir in packages/*/; do
+  name=$(jq -r .name "$dir/package.json")
+  configs=$(jq -r '(.exports // {}) | .. | strings | select(endswith(".config.js"))' \
+    "$dir/package.json" | sort -u)
+  [ -z "$configs" ] && continue
+  while IFS= read -r config; do
+    problems=$(cd "$dir" && CONFIG="$config" node --input-type=module --eval '
+      const mod = await import(process.env.CONFIG)
+      const flat = (c) => (c?.plugins ?? []).flat(Infinity).filter(Boolean)
+      // The default export has to be a factory too: an exported config *object*
+      // is built at module scope by definition, so it can never be per-load.
+      if (typeof mod.default !== "function") {
+        console.log(`default export is ${typeof mod.default === "object" ? "an" : "a"} ${typeof mod.default}, expected a factory`)
+      }
+      for (const [key, fn] of Object.entries(mod)) {
+        if (typeof fn !== "function") continue
+        let a, b
+        try { a = flat(fn({})); b = flat(fn({})) } catch { continue }
+        const shared = a.filter((p, i) => p === b[i]).map((p) => p.name)
+        if (shared.length > 0) {
+          console.log(`${key}() reuses ${shared.length} plugin instance(s) between calls: ${shared.slice(0, 3).join(", ")}`)
+        }
+      }
+    ' 2>&1)
+    if [ -n "$problems" ]; then
+      err "$name: $config does not build a fresh config per call:"
+      sed 's/^/    /' <<<"$problems" >&2
+    else
+      ok "$name: $config builds a fresh config per call"
+    fi
+  done <<<"$configs"
+done
+
+# --- 5. Dependency changes must carry a changeset -----------------------------
 # Nothing here is versioned by hand; a dep bump with no changeset is a change
 # that never reaches npm.
 # CI passes the PR's base branch. Locally there is nothing to pass, so fall back

@@ -1,0 +1,10 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.5.12/schema.json",
+  "extends": ["@chuvenger/typescript-stack/biome.json"],
+  "linter": {
+    "domains": {
+      "react": "recommended",
+      "test": "recommended"
+    }
+  }
+}

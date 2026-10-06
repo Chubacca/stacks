@@ -10,9 +10,14 @@
   },
   "exports": {
     "./tsconfig.json": "./tsconfig.json",
+    "./biome.json": "./biome.json",
     "./vite": {
       "types": "./vite.config.d.ts",
       "default": "./vite.config.js"
+    },
+    "./vitest.config": {
+      "types": "./vitest.config.d.ts",
+      "default": "./vitest.config.js"
     }
   },
   "bin": {
@@ -23,6 +28,7 @@
   },
   "dependencies": {
     "@chuvenger/typescript-app-stack": "workspace:*",
+    "@chuvenger/typescript-stack": "workspace:*",
     "@tailwindcss/vite": "^4.3.3",
     "svelte": "^5.57.1",
     "@sveltejs/kit": "^3.0.0",
