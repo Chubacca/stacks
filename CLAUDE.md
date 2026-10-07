@@ -22,6 +22,12 @@ it must pass with zero failures. It verifies that:
   tarball, and each skill's frontmatter has a `name` and `description`
 - every `*.config.js` export is a factory, and two calls share none of the
   objects the config exposes
+- the config exports still behave as documented — `.github/check-config-contracts.mjs`
+  asserts `mergeKnipConfig`'s concatenate-vs-replace rules, that each knip preset
+  carries the layers below it, that `createViteConfig` appends an array of
+  plugins but hands a function control of the order, and 12 cases of the
+  `.svelte` compiler. This is the closest thing to a test suite here; add to it
+  when you add behaviour to a config export
 - the framework `biome.json` files are current with the base they were
   generated from
 - every package changed since the merge base is named in a changeset

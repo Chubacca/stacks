@@ -194,7 +194,23 @@ for dir in packages/*/; do
   done <<<"$configs"
 done
 
-# --- 5. Framework Biome configs must stay flattened and current --------------
+# --- 5. Config exports must still behave as documented -----------------------
+# Section 4 proves these modules are shaped right; it cannot see whether they
+# still do the right thing. The parts able to break quietly are not the shapes:
+# `mergeKnipConfig` decides which options concatenate and which replace,
+# `createViteConfig` gives `plugins` two different meanings, and the `.svelte`
+# compiler is six regexes with lookbehinds whose failure mode is inventing a
+# module specifier that is nowhere in the source. There is no test runner in
+# this repo, and the bug only shows up in a consuming app.
+echo "Checking config exports behave as documented..."
+if contract_failures=$(node ./.github/check-config-contracts.mjs 2>&1); then
+  ok "${contract_failures}"
+else
+  err "config exports do not behave as documented:"
+  sed 's/^/    /' <<<"$contract_failures" >&2
+fi
+
+# --- 6. Framework Biome configs must stay flattened and current --------------
 # Biome resolves exactly one level of `extends`, dropping the grandparent
 # without a warning, so a framework config cannot reach the base by extending
 # it — an app naming only the framework config would get its keys and nothing
@@ -208,7 +224,7 @@ else
   sed 's/^/    /' <<<"$biome_drift" >&2
 fi
 
-# --- 6. Every changed package must be named in a changeset --------------------
+# --- 7. Every changed package must be named in a changeset --------------------
 # Nothing here is versioned by hand; a change with no changeset is a change
 # that never reaches npm. Naming *some* package is not enough either: the
 # version group is `fixed`, so one changeset bumps all four whatever it names,
