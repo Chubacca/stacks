@@ -9,12 +9,18 @@
     "directory": "packages/typescript-app"
   },
   "exports": {
-    "./link-skills": "./link-skills.js"
+    "./link-skills": "./link-skills.js",
+    "./knip.config": {
+      "types": "./knip.config.d.ts",
+      "default": "./knip.config.js"
+    }
   },
   "files": [
     "link-skills.js",
     "skills",
-    "CHANGELOG.md"
+    "CHANGELOG.md",
+    "knip.config.js",
+    "knip.config.d.ts"
   ],
   "bin": {
     "link-stack-skills": "link-skills.js"

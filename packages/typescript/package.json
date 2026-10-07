@@ -11,6 +11,10 @@
   "exports": {
     "./tsconfig.json": "./tsconfig.json",
     "./biome.json": "./biome.json",
+    "./knip.config": {
+      "types": "./knip.config.d.ts",
+      "default": "./knip.config.js"
+    },
     "./vitest.config": {
       "types": "./vitest.config.d.ts",
       "default": "./vitest.config.js"
@@ -20,7 +24,7 @@
     "access": "public"
   },
   "dependencies": {
-    "typescript": "^7.0.2",
+    "typescript": "^6.0.3",
     "@biomejs/biome": "^2.5.15",
     "knip": "^6.39.0",
     "vitest": "^5.0.3",

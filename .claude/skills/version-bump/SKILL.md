@@ -35,8 +35,20 @@ record the intended bump as a changeset — nothing more.
 - **DO NOT** run `bun run version` / `changeset version` and commit the result —
   that is CI's job. Running it locally pre-consumes the changeset and deviates
   from the release flow.
-- Because the group is fixed, you only need **one** changeset entry naming any
-  single `@chuvenger/*` package; all four follow.
+- **DO name every package whose files you changed**, even though the fixed
+  group means naming one is enough to bump all four. The *version* follows the
+  group; the **changelog entry only lands on the packages a changeset lists**,
+  and `check-packages.sh` fails on a package that changed without being named.
+  0.7.0 and 0.8.0 each named only `react-router-stack` while changing
+  `packages/svelte` too, so `svelte-stack`'s changelog read "Patch Changes —
+  @chuvenger/typescript-stack@0.7.0" and `typescript-stack`'s read "No changes
+  in this release" — for releases that changed the files both of them ship.
+- That is a floor, not a cap. **Also name a package whose consumers have to
+  read the entry**, even if its own files did not change — a dependency range
+  held in `typescript-stack` that unbreaks the SvelteKit build belongs in
+  `svelte-stack`'s changelog too, or a `svelte-stack` user sees only "Updated
+  dependencies". Beyond that, leave packages out: they pick up the version from
+  the group and a dependency-bump line, which is accurate.
 
 ## Choosing the bump level
 
@@ -48,29 +60,41 @@ Standard semver, applied to the whole group:
 - `major` — breaking change (removed/renamed export, dropped dependency, changed
   config contract).
 
-Current versions are all **0.x**, so treat the group as pre-1.0: prefer `patch`
-and `minor`; avoid `major` churn unless genuinely breaking.
+The group is **pre-1.0**, and that changes what the levels mean:
+
+- **`minor` is the breaking slot.** `0.x` has nowhere else to put a breaking
+  change, so mark one `minor` and say "Breaking:" in the body. Do **not** reach
+  for `major` to signal severity — `major` on `0.8.0` publishes **1.0.0**, which
+  is a separate decision about the group's stability, not a description of one
+  change.
+- A caret on a `0.x` version is locked to the minor (`^0.8.0` is
+  `>=0.8.0 <0.9.0`), so consumers who want to track releases without editing
+  their package.json every time pin **`^0`**. Mention that in a changeset whose
+  change is breaking, because `^0` adopts it automatically with no warning.
 
 ## Steps
 
 1. **Pick the level** (see above), or use the level the user asked for. If they
    name a target version, derive the level from the current version:
-   - current `0.2.0` → target `0.2.1` = `patch`
-   - current `0.2.0` → target `0.3.0` = `minor`
-   - current `0.2.0` → target `1.0.0` = `major`
+   - current `0.9.0` → target `0.9.1` = `patch`
+   - current `0.9.0` → target `0.10.0` = `minor`
+   - current `0.9.0` → target `1.0.0` = `major` (only to declare 1.0.0)
 
-2. **Write a changeset** under `.changeset/<slug>.md`. One entry is enough (the
-   fixed group carries the rest):
+2. **Write a changeset** under `.changeset/<slug>.md`, naming every package
+   whose files the change touches:
 
    ```markdown
    ---
    "@chuvenger/typescript-app-stack": patch
+   "@chuvenger/svelte-stack": patch
    ---
 
    <one or two sentences describing the change, consumer-facing>
    ```
 
-   You can also run `bunx changeset` for the interactive prompt, but writing the
+   List every package whose files the change touches, and say what a consuming
+   app has to do about it (including "nothing", when that is the answer). You
+   can also run `bunx changeset` for the interactive prompt, but writing the
    file directly is fine and faster.
 
 3. **Preview** what will bump (does not modify anything):
