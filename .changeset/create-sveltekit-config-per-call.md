@@ -1,8 +1,12 @@
 ---
-"@chuvenger/svelte-stack": major
+"@chuvenger/svelte-stack": minor
 ---
 
 **Breaking: `svelteKitConfig` is replaced by `createSvelteKitConfig()`.**
+
+The group is pre-1.0, so this breaking change is a `minor` — `0.x` has no
+other slot for one, and a `major` would declare 1.0.0. Pin `^0` rather than
+`^0.8.0` if you want to pick these up without editing the range each time.
 
 0.7.0 moved `createBase` to per-call construction because this module is a bare
 import out of `node_modules`, so Node's ESM cache evaluates it exactly once per

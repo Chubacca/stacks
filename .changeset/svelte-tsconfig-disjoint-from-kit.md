@@ -1,9 +1,13 @@
 ---
-"@chuvenger/svelte-stack": major
+"@chuvenger/svelte-stack": minor
 ---
 
 **Breaking: `@chuvenger/svelte-stack/tsconfig.json` is down to three options,
 and no longer fights `$app/tsconfig`.**
+
+The group is pre-1.0, so this breaking change is a `minor` — `0.x` has no
+other slot for one, and a `major` would declare 1.0.0. Pin `^0` rather than
+`^0.8.0` if you want to pick these up without editing the range each time.
 
 A SvelteKit 3 app has to extend `$app/tsconfig`, the config `svelte-kit sync`
 generates into `node_modules`. It supplies `paths`, `rootDirs`,

@@ -71,6 +71,14 @@ does the bump on merge to `main`. Add a changeset; never edit a `version` field
 by hand and never run `changeset version` locally. See
 `.claude/skills/version-bump`.
 
+The group is **pre-1.0**, so `minor` is the breaking slot — `0.x` has nowhere
+else to put a breaking change, and `major` would publish 1.0.0, which is a
+decision about the group's stability rather than a description of one change.
+That also means a caret is locked to the minor (`^0.8.0` is `>=0.8.0 <0.9.0`),
+so consuming apps pin **`^0`** to track releases without editing the range every
+time — and therefore adopt breaking changes silently, which is why a breaking
+changeset has to say so in its body.
+
 Name **every** package whose files you changed in the changeset frontmatter.
 The fixed group means naming one is enough to bump all four, but the changelog
 entry only lands on the packages a changeset lists — which is how 0.7.0 and

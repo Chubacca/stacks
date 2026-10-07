@@ -60,19 +60,25 @@ Standard semver, applied to the whole group:
 - `major` — breaking change (removed/renamed export, dropped dependency, changed
   config contract).
 
-The group is **1.x**, so these mean what they say: a consumer on `^1.0.0` picks
-up every `minor` and `patch` without touching their package.json, and a `major`
-is the one that asks them to act. Mark a breaking change `major` rather than
-reaching for `minor` — under `0.x` the minor *was* the breaking slot, and
-changesets written then used it that way.
+The group is **pre-1.0**, and that changes what the levels mean:
+
+- **`minor` is the breaking slot.** `0.x` has nowhere else to put a breaking
+  change, so mark one `minor` and say "Breaking:" in the body. Do **not** reach
+  for `major` to signal severity — `major` on `0.8.0` publishes **1.0.0**, which
+  is a separate decision about the group's stability, not a description of one
+  change.
+- A caret on a `0.x` version is locked to the minor (`^0.8.0` is
+  `>=0.8.0 <0.9.0`), so consumers who want to track releases without editing
+  their package.json every time pin **`^0`**. Mention that in a changeset whose
+  change is breaking, because `^0` adopts it automatically with no warning.
 
 ## Steps
 
 1. **Pick the level** (see above), or use the level the user asked for. If they
    name a target version, derive the level from the current version:
-   - current `1.2.0` → target `1.2.1` = `patch`
-   - current `1.2.0` → target `1.3.0` = `minor`
-   - current `1.2.0` → target `2.0.0` = `major`
+   - current `0.9.0` → target `0.9.1` = `patch`
+   - current `0.9.0` → target `0.10.0` = `minor`
+   - current `0.9.0` → target `1.0.0` = `major` (only to declare 1.0.0)
 
 2. **Write a changeset** under `.changeset/<slug>.md`, naming every package
    whose files the change touches:

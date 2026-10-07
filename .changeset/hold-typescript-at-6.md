@@ -1,10 +1,14 @@
 ---
-"@chuvenger/typescript-stack": major
-"@chuvenger/svelte-stack": major
+"@chuvenger/typescript-stack": minor
+"@chuvenger/svelte-stack": minor
 ---
 
 **Breaking: `typescript` is held at `^6.0.3`, down from `^7.0.2`. This fixes a
 SvelteKit build that could not run at all.**
+
+The group is pre-1.0, so this breaking change is a `minor` — `0.x` has no
+other slot for one, and a `major` would declare 1.0.0. Pin `^0` rather than
+`^0.8.0` if you want to pick these up without editing the range each time.
 
 `typescript@7` is the Go port, and its npm package no longer exposes the
 classic JavaScript API — the `.` export is `./lib/version.cjs`, a version
