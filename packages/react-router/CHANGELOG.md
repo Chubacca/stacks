@@ -1,5 +1,13 @@
 # @chuvenger/react-router-stack
 
+## 0.9.1
+
+### Patch Changes
+
+- Updated dependencies [5c5d8fe]
+  - @chuvenger/typescript-app-stack@0.9.1
+  - @chuvenger/typescript-stack@0.9.1
+
 ## 0.9.0
 
 ### Minor Changes
